@@ -1,0 +1,32 @@
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local noclipActive = true
+
+-- แจ้งเตือนเมื่อเปิดใช้งาน
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "NoClip Activated",
+    Text = "เปิดใช้งานโหมดเดินทะลุกำแพงแล้ว!",
+    Duration = 3
+})
+
+-- ฟังก์ชันทำงานทุกๆ เฟรมเพื่อปิดการชนของชิ้นส่วนตัวละคร
+local noclipConnection
+noclipConnection = RunService.Stepped:Connect(function()
+    if not noclipActive then return end
+    
+    local character = LocalPlayer.Character
+    if character then
+        for _, part in ipairs(character:GetDescendants()) do
+            if part:IsA("BasePart") and part.CanCollide then
+                part.CanCollide = false
+            end
+        end
+    end
+end)
+
+-- (เสริม) หากต้องการให้ปิดการทำงานเมื่อรีเซ็ตตัวละครหรือออกจากเกม
+LocalPlayer.CharacterRemoving:Connect(function()
+    -- สามารถเพิ่มโค้ดจัดการที่นี่ได้ถ้าต้องการ
+end)
